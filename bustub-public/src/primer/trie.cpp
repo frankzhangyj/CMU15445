@@ -7,11 +7,27 @@ namespace bustub {
 template <class T>
 auto Trie::Get(std::string_view key) const -> const T * {
   throw NotImplementedException("Trie::Get is not implemented.");
-
   // You should walk through the trie to find the node corresponding to the key. If the node doesn't exist, return
   // nullptr. After you find the node, you should use `dynamic_cast` to cast it to `const TrieNodeWithValue<T> *`. If
   // dynamic_cast returns `nullptr`, it means the type of the value is mismatched, and you should return nullptr.
   // Otherwise, return the value.
+
+  const TrieNode* current = root_.get();
+
+  for (auto& c : key) {
+    auto it = current->children_.find(c);
+    if (it == nullptr) {
+      return nullptr;
+    }
+    current = current->children_[c].get();
+  }
+
+  auto ans = dynamic_cast<const TrieNodeWithValue<T>*>(current);
+  if (ans == nullptr) {
+    return nullptr;
+  } else {
+    return ans->value_.get();
+  }
 }
 
 template <class T>
